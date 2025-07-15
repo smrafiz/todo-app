@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -53,6 +54,11 @@ export default function Home() {
           className={`${geistSans.className} ${geistMono.className} font-sans flex flex-col min-h-screen p-8 gap-8 bg-gray-50`}
       >
         <h1 className="text-2xl font-bold text-center">📝 My ToDo List</h1>
+        <div className="mb-4 text-center">
+          <Link href="/report" className="text-blue-600 underline">
+              Go to report 
+          </Link>
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <input
