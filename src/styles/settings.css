@@ -1,0 +1,24 @@
+@theme inline {
+	--color-background: #ffffff;
+	--color-primary: #2A9D8F;
+	--color-secondary: #264653;
+	--color-tertiary: #E9C46A;
+	--color-text-default: #333;
+	--font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+
+	--breakpoint-xs: 30rem;
+	--breakpoint-sm: 36rem;
+	--breakpoint-md: 48rem;
+	--breakpoint-lg: 62rem;
+	--breakpoint-xl: 75rem;
+	--breakpoint-2xl: 87.5rem;
+
+	--container-xs: 30rem;
+	--container-sm: 34rem;
+	--container-md: 44rem;
+	--container-lg: 60rem;
+	--container-xl: 71.25rem;
+	--container-2xl: 82.5rem;
+
+	--spacing: 0.25rem;
+}

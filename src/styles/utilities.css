@@ -1,0 +1,7 @@
+@utility td-px-15 {
+	padding-inline: calc(15 / 16 * 1rem);
+}
+
+@utility flex-center {
+	@apply flex items-center justify-center;
+}

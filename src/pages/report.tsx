@@ -47,13 +47,13 @@ export default function ReportPage() {
 
 	return (
 		<div className="min-h-screen p-8 bg-gray-50 font-sans">
-			<h1 className="text-2xl font-bold mb-4 text-center">📊 Task Completion Report</h1>
+			{/*<h1 className="text-2xl font-bold mb-4 text-center">📊 Task Completion Report</h1>*/}
 
-			<div className="mb-4 text-center">
-				<Link href="/" className="text-blue-600 underline">
-					← Back to ToDo List
-				</Link>
-			</div>
+			{/*<div className="mb-4 text-center">*/}
+			{/*	<Link href="/" className="text-blue-600 underline">*/}
+			{/*		← Back to ToDo List*/}
+			{/*	</Link>*/}
+			{/*</div>*/}
 
 			{/* 🟦 Monthly Table */}
 			<div className="max-w-3xl mx-auto bg-white p-4 rounded shadow mb-10">

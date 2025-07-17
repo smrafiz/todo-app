@@ -1,0 +1,35 @@
+.container {
+	@apply max-w-full mx-auto td-px-15;
+
+	@variant xs {
+		max-width: var(--container-xs);
+	}
+
+	@variant sm {
+		max-width: var(--container-sm);
+	}
+
+	@variant md {
+		max-width: var(--container-md);
+	}
+
+	@variant lg {
+		max-width: var(--container-lg);
+	}
+
+	@variant xl {
+		max-width: var(--container-xl);
+	}
+
+	@variant 2xl {
+		max-width: var(--container-2xl);
+	}
+}
+
+.row {
+	@apply flex flex-wrap items-center justify-center;
+
+	.row-col {
+		@apply flex-col;
+	}
+}
