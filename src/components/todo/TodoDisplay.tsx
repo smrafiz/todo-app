@@ -1,5 +1,5 @@
-import type { Todo } from '@/lib/types';
-import { formatReadableDate } from '@/utils/helpers';
+import type { Todo } from '@prisma/client';
+import { formatReadableDate } from '@/lib/utils';
 
 type TodoDisplayProps = {
 	todo: Todo;

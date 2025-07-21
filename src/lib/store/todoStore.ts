@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-
-type Todo = {
-	id: number;
-	title: string;
-	datetime: string;
-	is_done: number;
-};
+import type { Todo } from '@prisma/client';
 
 type Action =
 	| { type: 'SET_TODOS'; payload: Todo[] }
@@ -15,11 +9,27 @@ type Action =
 
 type TodoStore = {
 	todos: Todo[];
+	title: string;
+	datetime: string;
 	dispatch: (action: Action) => void;
+	setTitle: (title: string) => void;
+	setDatetime: (datetime: string) => void;
+	editingId: number | null;
+	editTitle: string;
+	editDatetime: string;
+	setEditingId: (id: number | null) => void;
+	setEditTitle: (title: string) => void;
+	setEditDatetime: (datetime: string) => void;
+	resetEditFields: () => void;
 };
 
 export const useTodoStore = create<TodoStore>((set) => ({
 	todos: [],
+	title: '',
+	datetime: '',
+	editingId: null,
+	editTitle: '',
+	editDatetime: '',
 	dispatch: (action) =>
 		set((state) => {
 			switch (action.type) {
@@ -45,4 +55,11 @@ export const useTodoStore = create<TodoStore>((set) => ({
 					return state;
 			}
 		}),
+	setTitle: (title) => set({ title }),
+	setDatetime: (datetime) => set({ datetime }),
+	setEditingId: (id) => set({ editingId: id }),
+	setEditTitle: (title) => set({ editTitle: title }),
+	setEditDatetime: (datetime) => set({ editDatetime: datetime }),
+	resetEditFields: () =>
+		set({ editingId: null, editTitle: '', editDatetime: '' }),
 }));

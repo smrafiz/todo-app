@@ -1,12 +1,22 @@
-import React, {useState} from 'react';
-import {useTodoStore} from '@/store/todoStore';
-import {getLocalDateTimeString} from '@/utils/helpers';
+import { useTodoStore } from '@/lib/store/todoStore';
+import { getLocalDateTimeString } from '@/lib/utils';
+import { useEffect } from 'react';
 
 export default function AddTodoForm() {
-	const dispatch = useTodoStore(state => state.dispatch);
+	const {
+		title,
+		datetime,
+		setTitle,
+		setDatetime,
+		dispatch,
+	} = useTodoStore();
 
-	const [title, setTitle] = useState('');
-	const [datetime, setDatetime] = useState(getLocalDateTimeString);
+	// Initialize datetime when component mounts
+	useEffect(() => {
+		if (!datetime) {
+			setDatetime(getLocalDateTimeString());
+		}
+	}, [datetime, setDatetime]);
 
 	const handleAdd = async () => {
 		if (!title || !datetime) {
@@ -14,15 +24,14 @@ export default function AddTodoForm() {
 		}
 
 		const newTodo = {
-			id: Date.now(),
 			title,
-			datetime,
-			is_done: 0,
+			datetime: new Date(datetime),
+			is_done: false,
 		};
 
 		const res = await fetch('/api/todos', {
 			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(newTodo),
 		});
 
@@ -32,12 +41,10 @@ export default function AddTodoForm() {
 		}
 
 		const savedTodo = await res.json();
+		dispatch({ type: 'ADD_TODO', payload: savedTodo });
 
-		dispatch({type: 'ADD_TODO', payload: savedTodo});
-
-		// Reset inputs
 		setTitle('');
-		setDatetime(getLocalDateTimeString);
+		setDatetime(getLocalDateTimeString());
 	};
 
 	return (
@@ -47,13 +54,13 @@ export default function AddTodoForm() {
 				placeholder="Todo title"
 				className="border p-2 rounded w-full mb-2"
 				value={title}
-				onChange={e => setTitle(e.target.value)}
+				onChange={(e) => setTitle(e.target.value)}
 			/>
 			<input
 				type="datetime-local"
 				className="border p-2 rounded w-full mb-2"
 				value={datetime}
-				onChange={e => setDatetime(e.target.value)}
+				onChange={(e) => setDatetime(e.target.value)}
 			/>
 			<button
 				className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
