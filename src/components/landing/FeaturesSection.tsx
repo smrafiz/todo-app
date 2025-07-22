@@ -40,7 +40,7 @@ export default function FeaturesSection() {
 					{features.map((feature, index) => (
 						<Card
 							key={index}
-							className="p-6 text-center hover:shadow-medium transition-shadow bg-gradient-card"
+							className="p-6 text-center hover:shadow-medium transition-shadow border shadow-sm bg-gradient-card"
 						>
 							<feature.icon className="h-12 w-12 text-primary mx-auto mb-4" />
 							<h3 className="text-xl font-semibold mb-2">{feature.title}</h3>

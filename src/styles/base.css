@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-	@apply bg-background text-text-default;
+	@apply text-text-default;
 }
 
 a {
@@ -15,5 +15,5 @@ a {
 }
 
 .wrapper {
-	@apply min-h-screen my-10;
+	@apply min-h-screen;
 }

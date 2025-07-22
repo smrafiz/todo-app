@@ -1,11 +1,11 @@
 @import "tailwindcss";
-
-@import "./settings.css";
-@import "./base.css";
-@import "./utilities.css";
-@import "./layout.css";
-@import "./components.css";
 @import "tw-animate-css";
+
+@import "../styles/settings.css";
+@import "../styles/base.css";
+@import "../styles/utilities.css";
+@import "../styles/layout.css";
+@import "../styles/components.css";
 
 @theme inline {
 	--radius: 0.625rem;

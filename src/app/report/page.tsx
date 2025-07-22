@@ -1,12 +1,7 @@
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+'use client';
 
-type Todo = {
-	id: number;
-	title: string;
-	datetime: string;
-	is_done: number;
-};
+import type { Todo } from '@prisma/client';
+import { useEffect, useState } from 'react';
 
 type GroupedTodos = {
 	[date: string]: Todo[];
@@ -16,24 +11,32 @@ type MonthlyStats = {
 	[month: string]: { total: number; done: number };
 };
 
-export default function ReportPage() {
+export default function Page() {
 	const [todos, setTodos] = useState<Todo[]>([]);
 
 	useEffect(() => {
 		fetch('/api/todos')
 			.then(res => res.json())
-			.then(data => setTodos(data));
+			.then(data => {
+				console.log(data);
+					setTodos(
+						data.map((todo: Todo) => ({
+							...todo,
+							datetime: new Date(todo.datetime),
+						}))
+					)
+				}
+			)
+			.catch(console.error);
 	}, []);
 
-	// Group todos by day (yyyy-mm-dd)
 	const grouped: GroupedTodos = {};
-	// Group todos by month (yyyy-mm)
 	const monthStats: MonthlyStats = {};
 
 	todos.forEach(todo => {
-		const date = new Date(todo.datetime);
-		const dayKey = todo.datetime.slice(0, 10); // yyyy-mm-dd
-		const monthKey = todo.datetime.slice(0, 7); // yyyy-mm
+		const iso = todo.datetime.toISOString();
+		const dayKey = iso.slice(0, 10);
+		const monthKey = iso.slice(0, 7);
 
 		// Daily grouping
 		if (!grouped[dayKey]) grouped[dayKey] = [];
