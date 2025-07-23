@@ -1,12 +1,14 @@
-import { create } from "zustand";
-import type { Todo } from "@prisma/client";
-import { isToday, isFuture, isPast } from "date-fns";
+import {create} from "zustand";
+import {nanoid} from "nanoid";
+import type {Todo} from "@prisma/client";
+import {isFuture, isPast, isToday} from "date-fns";
+import {type Action, todoReducer} from "../reducer/todoReducer";
 
-// Filter and sort types
 type TodoFilter = {
 	status: "all" | "completed" | "incomplete";
 	due: "all" | "today" | "upcoming" | "overdue" | "no-due";
 	search: string;
+	project?: string;
 };
 
 type TodoSort = {
@@ -14,42 +16,33 @@ type TodoSort = {
 	order: "asc" | "desc";
 };
 
-type Action =
-	| { type: "SET_TODOS"; payload: Todo[] }
-	| { type: "ADD_TODO"; payload: Todo }
-	| { type: "UPDATE_TODO"; payload: Todo }
-	| { type: "REMOVE_TODO"; payload: string };
+type NewTodo = Partial<Omit<Todo, "id" | "createdAt" | "updatedAt">> & {
+	id?: string;
+};
 
 type TodoStore = {
 	todos: Todo[];
-	title: string;
-	dueDate: string;
 	filter: TodoFilter;
 	sort: TodoSort;
 
 	dispatch: (action: Action) => void;
-
-	setTitle: (title: string) => void;
-	setDueDate: (dueDate: string) => void;
-
-	editingId: string | null;
-	editTitle: string;
-	editDueDate: string;
-	setEditingId: (id: string | null) => void;
-	setEditTitle: (title: string) => void;
-	setEditDueDate: (dueDate: string) => void;
-	resetEditFields: () => void;
-
 	setFilter: (filter: Partial<TodoFilter>) => void;
 	setSort: (sort: TodoSort) => void;
 	getFilteredTodos: () => Todo[];
+	resetFilters: () => void;
+
+	isLoaded: boolean;
+	loadTodos: (userId: string) => Promise<void>;
+
+	addTodo: (todo: NewTodo) => void;
+	updateTodo: (todo: Partial<Todo> & { id: string }) => void;
+	removeTodo: (id: string) => void;
+	setTodos: (todos: Todo[]) => void;
+	toggleTodo: (id: string) => void;
 };
 
 export const useTodoStore = create<TodoStore>((set, get) => ({
 	todos: [],
-	title: "",
-	dueDate: "",
-
 	filter: {
 		status: "all",
 		due: "all",
@@ -59,102 +52,153 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		field: "dueDate",
 		order: "asc",
 	},
+	isLoaded: false,
 
-	editingId: null,
-	editTitle: "",
-	editDueDate: "",
-
-	dispatch: (action) =>
-		set((state) => {
-			switch (action.type) {
-				case "SET_TODOS":
-					return { todos: action.payload };
-
-				case "ADD_TODO":
-					return { todos: [...state.todos, action.payload] };
-
-				case "UPDATE_TODO":
-					return {
-						todos: state.todos.map((t) =>
-							t.id === action.payload.id ? action.payload : t
-						),
-					};
-
-				case "REMOVE_TODO":
-					return {
-						todos: state.todos.filter((t) => t.id !== action.payload),
-					};
-
-				default:
-					return state;
-			}
-		}),
-
-	setTitle: (title) => set({ title }),
-	setDueDate: (dueDate) => set({ dueDate }),
-	setEditingId: (id) => set({ editingId: id }),
-	setEditTitle: (title) => set({ editTitle: title }),
-	setEditDueDate: (dueDate) => set({ editDueDate: dueDate }),
-	resetEditFields: () =>
-		set({ editingId: null, editTitle: "", editDueDate: "" }),
+	dispatch: (action) => {
+		set(state => todoReducer(state, action));
+	},
 
 	setFilter: (newFilter) =>
 		set((state) => ({
-			filter: { ...state.filter, ...newFilter },
+			filter: {...state.filter, ...newFilter},
 		})),
 
-	setSort: (newSort) => set({ sort: newSort }),
+	setSort: (newSort) => set({sort: newSort}),
+
+	resetFilters: () =>
+		set({
+			filter: {status: "all", due: "all", search: ""},
+			sort: {field: "dueDate", order: "asc"},
+		}),
 
 	getFilteredTodos: () => {
-		const { todos, filter, sort } = get();
+		const {todos, filter, sort} = get();
 
-		let filtered = todos.filter((todo) => {
-			// Status filter
+		const filtered = todos.filter((todo) => {
+			// Status
 			if (filter.status === "completed" && !todo.completed) return false;
 			if (filter.status === "incomplete" && todo.completed) return false;
 
-			// Due date filter
-			if (filter.due === "today") {
-				if (!todo.dueDate || !isToday(new Date(todo.dueDate))) return false;
-			} else if (filter.due === "upcoming") {
-				if (!todo.dueDate || !isFuture(new Date(todo.dueDate))) return false;
-			} else if (filter.due === "overdue") {
-				if (
-					!todo.dueDate ||
-					!isPast(new Date(todo.dueDate)) ||
-					todo.completed
-				)
-					return false;
-			} else if (filter.due === "no-due") {
-				if (todo.dueDate) return false;
-			}
+			// Due
+			if (filter.due === "today" && (!todo.dueDate || !isToday(new Date(todo.dueDate)))) return false;
+			if (filter.due === "upcoming" && (!todo.dueDate || !isFuture(new Date(todo.dueDate)))) return false;
+			if (filter.due === "overdue" && (!todo.dueDate || !isPast(new Date(todo.dueDate)) || todo.completed)) return false;
+			if (filter.due === "no-due" && todo.dueDate) return false;
 
-			// Search filter
-			if (
-				filter.search &&
-				!todo.title.toLowerCase().includes(filter.search.toLowerCase())
-			)
-				return false;
-
-			return true;
+			// Search
+			return !(filter.search && !todo.title.toLowerCase().includes(filter.search.toLowerCase()));
 		});
 
+		// Sort
 		filtered.sort((a, b) => {
 			let aValue: any = a[sort.field];
 			let bValue: any = b[sort.field];
-
 			if (sort.field === "dueDate" || sort.field === "createdAt") {
 				aValue = aValue ? new Date(aValue).getTime() : Infinity;
 				bValue = bValue ? new Date(bValue).getTime() : Infinity;
 			}
-
-			if (sort.order === "asc") {
-				return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-			} else {
-				return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-			}
+			return sort.order === "asc"
+				? aValue - bValue
+				: bValue - aValue;
 		});
 
 		return filtered;
+	},
+
+	loadTodos: async (userId: string) => {
+		try {
+			const res = await fetch(`/api/todos?userId=${userId}`);
+			if (!res.ok) throw new Error("Failed to fetch todos");
+
+			const data: Todo[] = await res.json();
+			const todos = data.map(todo => ({
+				...todo,
+				dueDate: todo.dueDate ? new Date(todo.dueDate) : null,
+				createdAt: new Date(todo.createdAt),
+				updatedAt: new Date(todo.updatedAt),
+			}));
+
+			get().dispatch({ type: "SET_TODOS", payload: todos });
+			set({ isLoaded: true });
+		} catch (error) {
+			console.error("Failed to load todos:", error);
+			set({ isLoaded: false });
+		}
+	},
+
+	addTodo: async (todo) => {
+		const now = new Date();
+		const newTodo: Todo = {
+			id: todo.id ?? nanoid(),
+			title: todo.title ?? "Untitled",
+			description: todo.description ?? null,
+			completed: todo.completed ?? false,
+			dueDate: todo.dueDate ?? null,
+			tags: Array.isArray(todo.tags) ? todo.tags.join(',') : todo.tags ?? null,
+			priority: todo.priority ?? "medium",
+			userId: todo.userId ?? "",
+			projectId: todo.projectId ?? null,
+			createdAt: now,
+			updatedAt: now,
+		};
+
+		console.log(newTodo)
+
+		try {
+			await fetch("/api/todos", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(newTodo),
+			});
+			get().dispatch({type: "ADD_TODO", payload: newTodo});
+		} catch (error) {
+			console.error("Failed to add todo", error);
+		}
+	},
+
+	updateTodo: async (todo) => {
+		try {
+			await fetch(`/api/todos/${todo.id}`, {
+				method: "PUT",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(todo),
+			});
+			get().dispatch({type: "UPDATE_TODO", payload: todo});
+		} catch (error) {
+			console.error("Failed to update todo", error);
+		}
+	},
+
+	removeTodo: async (id) => {
+		try {
+			await fetch(`/api/todos/${id}`, {
+				method: "DELETE",
+			});
+			get().dispatch({type: "REMOVE_TODO", payload: id});
+		} catch (error) {
+			console.error("Failed to delete todo:", error);
+		}
+	},
+
+	setTodos: (todos) => {
+		get().dispatch({type: "SET_TODOS", payload: todos});
+	},
+
+	toggleTodo: async (id) => {
+		const todo = get().todos.find(t => t.id === id);
+		if (!todo) return;
+
+		const updated = {...todo, completed: !todo.completed};
+
+		try {
+			await fetch(`/api/todos/${id}`, {
+				method: "PUT",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(updated),
+			});
+			get().dispatch({type: "TOGGLE_TODO", payload: id});
+		} catch (error) {
+			console.error("Failed to toggle todo:", error);
+		}
 	},
 }));
