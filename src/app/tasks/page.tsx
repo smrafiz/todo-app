@@ -60,7 +60,6 @@ export default function AllTasksPage() {
 	if (!user) {
 		return null;
 	}
-	console.log(getFilteredTodos())
 
 	const filteredTasks = getFilteredTodos().filter(t => t.userId === user?.id);
 

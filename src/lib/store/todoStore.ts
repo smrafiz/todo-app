@@ -142,8 +142,6 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 			updatedAt: now,
 		};
 
-		console.log(newTodo)
-
 		try {
 			await fetch("/api/todos", {
 				method: "POST",
