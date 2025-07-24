@@ -1,13 +1,7 @@
 'use client';
 
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
-import { ReactNode } from 'react';
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from '@/components/ui/dialog';
+import {ReactNode} from 'react';
 
 interface ModalProps {
 	isOpen: boolean;
@@ -17,16 +11,10 @@ interface ModalProps {
 	children: ReactNode;
 }
 
-export default function Modal({
-	                              isOpen,
-	                              onClose,
-	                              title,
-	                              description,
-	                              children,
-                              }: ModalProps) {
+export default function Modal({isOpen, onClose, title, description, children}: ModalProps) {
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent>
+			<DialogContent aria-describedby={description ? undefined : ''} className="sm:max-w-md">
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
 					{description && <DialogDescription>{description}</DialogDescription>}

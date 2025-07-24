@@ -15,7 +15,7 @@ export default function Page() {
 	const [todos, setTodos] = useState<Todo[]>([]);
 
 	useEffect(() => {
-		fetch('/api/todos')
+		fetch('/api/tasks')
 			.then(res => res.json())
 			.then(data => {
 				console.log(data);

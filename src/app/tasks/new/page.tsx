@@ -4,7 +4,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/lib/store/userStore';
-import TaskForm from '@/components/todo/TaskForm';
+import TaskForm from '@/components/task/TaskForm';
 import {ArrowLeft} from "lucide-react";
 
 export default function NewTaskPage() {

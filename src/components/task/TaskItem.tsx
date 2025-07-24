@@ -8,7 +8,7 @@ import {Project, Todo} from '@prisma/client';
 import {Button} from '@/components/ui/button';
 import Modal from '@/components/ui/modal';
 import {format, isPast, isToday} from 'date-fns';
-import {Check, Edit2, Trash2} from "lucide-react";
+import {Calendar, CheckCircle, Circle, Edit2, Trash2} from "lucide-react";
 
 interface TodoWithProject extends Todo {
 	project?: Project;
@@ -49,8 +49,6 @@ export default function TaskItem({todo}: Props) {
 		return `Due ${format(todo.dueDate, 'MMM d, yyyy')}`;
 	};
 
-	console.log(todo.tags)
-
 	return (
 		<>
 			<div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow group">
@@ -60,17 +58,11 @@ export default function TaskItem({todo}: Props) {
 							onClick={handleToggleComplete}
 							className="mt-1 mr-4 cursor-pointer"
 						>
-							<div
-								className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-									todo.completed
-										? 'bg-green-500 border-green-500'
-										: 'border-gray-300 hover:border-blue-500'
-								}`}
-							>
-								{todo.completed && (
-									<Check className="w-3.5 h-3.5 text-white" />
-								)}
-							</div>
+							{todo.completed ? (
+								<CheckCircle className="w-5 h-5 text-green-600" />
+							) : (
+								<Circle className="w-5 h-5" />
+							)}
 						</button>
 
 						<div className="flex-1">
@@ -104,7 +96,7 @@ export default function TaskItem({todo}: Props) {
 
 							<div className="flex items-center gap-4 mt-3">
 				                <span className={`text-sm ${getDueDateColor()}`}>
-				                  <i className="ri-calendar-line mr-1"></i>
+				                  <Calendar className="w-4 h-4 mr-1" />
 					                {getDueDateText()}
 				                </span>
 

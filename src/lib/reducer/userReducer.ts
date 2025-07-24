@@ -1,3 +1,4 @@
+import {produce} from "immer";
 import type { User } from "@prisma/client";
 
 // State type
@@ -18,24 +19,33 @@ export type UserAction =
 	| { type: "LOGOUT" };
 
 // Reducer
-export function userReducer(state: UserState, action: UserAction): UserState {
+export const userReducer = produce((draft: UserState, action: UserAction) => {
 	switch (action.type) {
 		case "SET_USER":
-			return { ...state, user: action.payload, error: null };
+			draft.user = action.payload;
+			draft.error = null;
+			break;
 		case "UPDATE_USER":
-			return {
-				...state,
-				user: state.user ? { ...state.user, ...action.payload } : null,
-			};
+			if (draft.user) {
+				Object.assign(draft.user, action.payload);
+			}
+			break;
 		case "DELETE_USER":
-			return { ...state, user: null, error: null };
+			draft.user = null;
+			draft.error = null;
+			break;
 		case "SET_LOADING":
-			return { ...state, isLoading: action.payload };
+			draft.isLoading = action.payload;
+			break;
 		case "SET_ERROR":
-			return { ...state, error: action.payload };
+			draft.error = action.payload;
+			break;
 		case "LOGOUT":
-			return { ...state, user: null, isLoading: false, error: null };
+			draft.user = null;
+			draft.isLoading = false;
+			draft.error = null;
+			break;
 		default:
-			return state;
+			break;
 	}
-}
+});

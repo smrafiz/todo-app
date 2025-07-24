@@ -5,7 +5,7 @@ import type { Todo } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useUserStore } from '@/lib/store/userStore';
-import TaskForm from '@/components/todo/TaskForm';
+import TaskForm from '@/components/task/TaskForm';
 
 export default function EditTaskPage() {
 	const { user, hasHydrated } = useUserStore();
@@ -26,7 +26,7 @@ export default function EditTaskPage() {
 			if (!id) return;
 
 			try {
-				const res = await fetch(`/api/todos/${id}`);
+				const res = await fetch(`/api/tasks/${id}`);
 				if (!res.ok) {
 					router.push('/tasks');
 					return;

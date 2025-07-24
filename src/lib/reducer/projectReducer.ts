@@ -1,3 +1,4 @@
+import {produce} from 'immer';
 import type {Project} from '@prisma/client';
 
 export type ProjectState = {
@@ -6,32 +7,38 @@ export type ProjectState = {
 
 export type ProjectAction =
 	| { type: 'ADD_PROJECT'; payload: Project }
-	| { type: 'UPDATE_PROJECT'; payload: Project }
+	| { type: 'UPDATE_PROJECT'; payload: Partial<Project> & { id: string } }
 	| { type: 'REMOVE_PROJECT'; payload: string }
 	| { type: 'SET_PROJECTS'; payload: Project[] }
 	| { type: 'CLEAR_PROJECTS' };
 
-export function projectReducer(state: ProjectState, action: ProjectAction): ProjectState {
-	switch (action.type) {
-		case 'ADD_PROJECT':
-			return {...state, projects: [...state.projects, action.payload]};
-		case 'UPDATE_PROJECT':
-			return {
-				...state,
-				projects: state.projects.map(p =>
-					p.id === action.payload.id ? {...p, ...action.payload} : p
-				),
-			};
-		case 'REMOVE_PROJECT':
-			return {
-				...state,
-				projects: state.projects.filter(p => p.id !== action.payload),
-			};
-		case 'SET_PROJECTS':
-			return {...state, projects: action.payload};
-		case 'CLEAR_PROJECTS':
-			return {...state, projects: []};
-		default:
-			return state;
+export const projectReducer = produce(
+	(draft: ProjectState, action: ProjectAction) => {
+		switch (action.type) {
+			case 'ADD_PROJECT':
+				draft.projects.push(action.payload);
+				break;
+			case 'UPDATE_PROJECT': {
+				const index = draft.projects.findIndex(p => p.id === action.payload.id);
+				if (index !== -1) {
+					draft.projects[index] = {
+						...draft.projects[index],
+						...action.payload,
+					};
+				}
+				break;
+			}
+			case 'REMOVE_PROJECT':
+				draft.projects = draft.projects.filter(p => p.id !== action.payload);
+				break;
+			case 'SET_PROJECTS':
+				draft.projects = action.payload;
+				break;
+			case 'CLEAR_PROJECTS':
+				draft.projects = [];
+				break;
+			default:
+				break;
+		}
 	}
-}
+);

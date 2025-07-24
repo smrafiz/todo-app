@@ -31,6 +31,8 @@ type TodoStore = {
 	getFilteredTodos: () => Todo[];
 	resetFilters: () => void;
 
+	error: string | null;
+	isLoading: boolean;
 	isLoaded: boolean;
 	loadTodos: (userId: string) => Promise<void>;
 
@@ -52,7 +54,9 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		field: "dueDate",
 		order: "asc",
 	},
+	isLoading: false,
 	isLoaded: false,
+	error: null,
 
 	dispatch: (action) => {
 		set(state => todoReducer(state, action));
@@ -72,7 +76,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		}),
 
 	getFilteredTodos: () => {
-		const {todos, filter, sort} = get();
+		const { todos, filter, sort } = get();
 
 		const filtered = todos.filter((todo) => {
 			// Status
@@ -86,7 +90,10 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 			if (filter.due === "no-due" && todo.dueDate) return false;
 
 			// Search
-			return !(filter.search && !todo.title.toLowerCase().includes(filter.search.toLowerCase()));
+			if (filter.search && !todo.title.toLowerCase().includes(filter.search.toLowerCase())) return false;
+
+			// Project filter
+			return !(filter.project && filter.project !== "all" && todo.projectId !== filter.project);
 		});
 
 		// Sort
@@ -97,17 +104,16 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 				aValue = aValue ? new Date(aValue).getTime() : Infinity;
 				bValue = bValue ? new Date(bValue).getTime() : Infinity;
 			}
-			return sort.order === "asc"
-				? aValue - bValue
-				: bValue - aValue;
+			return sort.order === "asc" ? aValue - bValue : bValue - aValue;
 		});
 
 		return filtered;
 	},
 
 	loadTodos: async (userId: string) => {
+		set({ isLoading: true, error: null });
 		try {
-			const res = await fetch(`/api/todos?userId=${userId}`);
+			const res = await fetch(`/api/tasks?userId=${userId}`);
 			if (!res.ok) throw new Error("Failed to fetch todos");
 
 			const data: Todo[] = await res.json();
@@ -120,9 +126,11 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 
 			get().dispatch({ type: "SET_TODOS", payload: todos });
 			set({ isLoaded: true });
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Failed to load todos:", error);
-			set({ isLoaded: false });
+			set({ isLoaded: false, error: error.message });
+		} finally {
+			set({ isLoading: false });
 		}
 	},
 
@@ -143,7 +151,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		};
 
 		try {
-			await fetch("/api/todos", {
+			await fetch("/api/tasks", {
 				method: "POST",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(newTodo),
@@ -156,7 +164,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 
 	updateTodo: async (todo) => {
 		try {
-			await fetch(`/api/todos/${todo.id}`, {
+			await fetch(`/api/tasks/${todo.id}`, {
 				method: "PUT",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(todo),
@@ -169,7 +177,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 
 	removeTodo: async (id) => {
 		try {
-			await fetch(`/api/todos/${id}`, {
+			await fetch(`/api/tasks/${id}`, {
 				method: "DELETE",
 			});
 			get().dispatch({type: "REMOVE_TODO", payload: id});
@@ -189,7 +197,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		const updated = {...todo, completed: !todo.completed};
 
 		try {
-			await fetch(`/api/todos/${id}`, {
+			await fetch(`/api/tasks/${id}`, {
 				method: "PUT",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(updated),
