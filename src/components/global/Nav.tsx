@@ -1,15 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { useUserStore } from "@/lib/store/userStore";
-import { usePathname, useRouter } from 'next/navigation';
 import {LogOut} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Skeleton} from "@/components/ui/skeleton";
+import {useUserStore} from "@/lib/store/userStore";
+import {usePathname, useRouter} from 'next/navigation';
 
 const Nav = () => {
 	const pathname = usePathname();
 	const router = useRouter();
-	const { user, logout, hasHydrated } = useUserStore();
+	const {user, logout, hasHydrated} = useUserStore();
 
 	const linkClass = (path: string) =>
 		pathname === path ? 'text-primary font-semibold' : 'text-text-default';
@@ -17,7 +18,13 @@ const Nav = () => {
 	if (!hasHydrated) {
 		return (
 			<nav className="site-navigation py-4">
-				<p className="text-sm text-gray-500">Loading menu...</p>
+				<ul className="main-menu flex items-center gap-4">
+					{Array.from({length: 4}).map((_, i) => (
+						<li key={i}>
+							<Skeleton key={i} className="h-[36px] w-20 rounded-md bg-gray-200"/>
+						</li>
+					))}
+				</ul>
 			</nav>
 		);
 	}
@@ -58,8 +65,9 @@ const Nav = () => {
 							</span>
 						</li>
 						<li>
-							<Button onClick={handleLogout} variant="ghost" className="text-red-600 flex items-center gap-2">
-								<LogOut className="w-4 h-4 ml-2" />
+							<Button onClick={handleLogout} variant="ghost"
+							        className="text-red-600 flex items-center gap-2">
+								<LogOut className="w-4 h-4 ml-2"/>
 								Logout
 							</Button>
 						</li>
