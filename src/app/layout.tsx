@@ -18,7 +18,6 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <html lang="en">
         <body className={`antialiased bg-gray-50 ${inter.className}`}>
         <div id="wrapper" className="wrapper min-h-screen">
-            <AuthChecker />
             <Header/>
             <main id="content" className="site-content">
                 {children}
