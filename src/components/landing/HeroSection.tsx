@@ -1,7 +1,6 @@
-import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
+import HeroButtons from "@/components/landing/HeroButtons";
 
 export default function HeroSection() {
 	return (
@@ -17,14 +16,8 @@ export default function HeroSection() {
 						<p className="text-xl text-muted-foreground leading-relaxed">
 							Transform your productivity with our intelligent task management system. Stay organized, meet deadlines, and achieve your goals effortlessly.
 						</p>
-						<div className="flex flex-col sm:flex-row gap-4">
-							<Button asChild size="lg" className="shadow-medium">
-								<Link href="/signup">Get Started Free</Link>
-							</Button>
-							<Button asChild variant="outline" size="lg">
-								<Link href="/login">Sign In</Link>
-							</Button>
-						</div>
+
+						<HeroButtons/>
 					</div>
 					<div className="relative animate-slide-up">
 						<Image

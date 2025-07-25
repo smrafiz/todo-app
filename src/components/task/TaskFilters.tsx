@@ -22,13 +22,14 @@ export default function TaskFilters({searchTerm, setSearchTerm}: Props) {
 				placeholder="Search tasks..."
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
-				className="text-sm flex-1"
+				className="text-sm flex-1 w-sm mt-0"
+				type="search"
 			/>
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-2 flex-1">
 				<select
 					value={filter.project || 'all'}
 					onChange={(e) => setFilter({project: e.target.value})}
-					className="px-3 py-2 text-sm border rounded-lg"
+					className="px-3 py-2 text-sm border rounded-lg flex-1"
 				>
 					<option value="all">All Projects</option>
 					{userProjects.map((p) => (
@@ -38,7 +39,7 @@ export default function TaskFilters({searchTerm, setSearchTerm}: Props) {
 				<select
 					value={filter.status}
 					onChange={(e) => setFilter({status: e.target.value as "all" | "completed" | "incomplete"})}
-					className="px-3 py-2 text-sm border rounded-lg"
+					className="px-3 py-2 text-sm border rounded-lg flex-1"
 				>
 					<option value="all">All Tasks</option>
 					<option value="incomplete">Incomplete</option>
@@ -49,7 +50,7 @@ export default function TaskFilters({searchTerm, setSearchTerm}: Props) {
 					onChange={(e) =>
 						setFilter({due: e.target.value as "all" | "today" | "upcoming" | "overdue" | "no-due"})
 					}
-					className="px-3 py-2 text-sm border rounded-lg"
+					className="px-3 py-2 text-sm border rounded-lg flex-1"
 				>
 					<option value="all">All Due Dates</option>
 					<option value="today">Due Today</option>
@@ -66,7 +67,7 @@ export default function TaskFilters({searchTerm, setSearchTerm}: Props) {
 							order: order as "asc" | "desc",
 						});
 					}}
-					className="px-3 py-2 text-sm border rounded-lg"
+					className="px-3 py-2 text-sm border rounded-lg flex-1"
 				>
 					<option value="dueDate-asc">Due Date (Earliest)</option>
 					<option value="dueDate-desc">Due Date (Latest)</option>

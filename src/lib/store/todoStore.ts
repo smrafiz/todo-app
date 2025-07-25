@@ -1,6 +1,6 @@
 import {create} from "zustand";
 import {nanoid} from "nanoid";
-import type {Todo} from "@prisma/client";
+import type {Project, Todo} from "@prisma/client";
 import {isFuture, isPast, isToday} from "date-fns";
 import {type Action, todoReducer} from "../reducer/todoReducer";
 
@@ -36,7 +36,7 @@ type TodoStore = {
 	isLoaded: boolean;
 	loadTodos: (userId: string) => Promise<void>;
 
-	addTodo: (todo: NewTodo) => void;
+	addTodo: (todo: Partial<NewTodo>) => void;
 	updateTodo: (todo: Partial<Todo> & { id: string }) => void;
 	removeTodo: (id: string) => void;
 	setTodos: (todos: Todo[]) => void;
@@ -134,29 +134,20 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 		}
 	},
 
-	addTodo: async (todo) => {
-		const now = new Date();
-		const newTodo: Todo = {
-			id: todo.id ?? nanoid(),
-			title: todo.title ?? "Untitled",
-			description: todo.description ?? null,
-			completed: todo.completed ?? false,
-			dueDate: todo.dueDate ?? null,
-			tags: Array.isArray(todo.tags) ? todo.tags.join(',') : todo.tags ?? null,
-			priority: todo.priority ?? "medium",
-			userId: todo.userId ?? "",
-			projectId: todo.projectId ?? null,
-			createdAt: now,
-			updatedAt: now,
-		};
-
+	addTodo: async (todoData) => {
 		try {
-			await fetch("/api/tasks", {
+			const res = await fetch("/api/tasks", {
 				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(newTodo),
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(todoData),
 			});
-			get().dispatch({type: "ADD_TODO", payload: newTodo});
+
+			if (!res.ok) {
+				throw new Error("Failed to create project");
+			}
+
+			const createdTodo: Todo = await res.json();
+			get().dispatch({ type: "ADD_TODO", payload: createdTodo });
 		} catch (error) {
 			console.error("Failed to add todo", error);
 		}

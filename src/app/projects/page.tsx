@@ -84,7 +84,7 @@ export default function ProjectsPage() {
 					<h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
 					<div className="flex gap-3">
 						<Link href="/tasks">
-							<Button variant="secondary" disabled={isLoading}>
+							<Button variant="secondary" disabled={isLoading} className="hover:bg-accent hover:text-accent-foreground">
 								<CheckSquare className="mr-2"/> Tasks
 							</Button>
 						</Link>

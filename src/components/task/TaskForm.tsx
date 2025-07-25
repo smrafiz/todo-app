@@ -90,6 +90,7 @@ export default function TaskForm({ task, isEdit = false }: TaskFormProps) {
 					dueDate,
 					tags: tags.length > 0 ? tags.join(',') : null,
 					completed: false,
+					priority: 'medium',
 					userId: user.id,
 					projectId: formData.projectId || null
 				});
@@ -105,7 +106,7 @@ export default function TaskForm({ task, isEdit = false }: TaskFormProps) {
 
 	return (
 		<Card>
-			<form onSubmit={handleSubmit} className="space-y-6">
+			<form onSubmit={handleSubmit} className="space-y-6 p-6 border border-gray-200 rounded-lg">
 				{errors.general && (
 					<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
 						{errors.general}

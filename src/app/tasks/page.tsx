@@ -62,7 +62,7 @@ export default function AllTasksPage() {
 					<h1 className="text-3xl font-bold text-gray-900">All Tasks</h1>
 					<div className="flex gap-3">
 						<Link href={'/projects'}>
-							<Button variant="secondary">
+							<Button variant="secondary" className="hover:bg-accent hover:text-accent-foreground">
 								<Folder className="w-4 h-4"/> Projects
 							</Button>
 						</Link>
@@ -72,7 +72,7 @@ export default function AllTasksPage() {
 					</div>
 				</div>
 
-				<Card className="mb-6">
+				<Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-8">
 					<TaskFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
 				</Card>
 

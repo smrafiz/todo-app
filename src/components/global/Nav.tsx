@@ -11,11 +11,9 @@ const Nav = () => {
 	const router = useRouter();
 	const { user, logout, hasHydrated } = useUserStore();
 
-	// Highlight the active page
 	const linkClass = (path: string) =>
 		pathname === path ? 'text-primary font-semibold' : 'text-text-default';
 
-	// Wait until Zustand rehydrates from localStorage
 	if (!hasHydrated) {
 		return (
 			<nav className="site-navigation py-4">
@@ -24,7 +22,6 @@ const Nav = () => {
 		);
 	}
 
-	// Logout handler
 	const handleLogout = () => {
 		logout();
 		router.push('/login');

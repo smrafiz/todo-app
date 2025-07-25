@@ -8,7 +8,7 @@ import {useUserTodos} from "@/lib/hooks/useUserTodos";
 import StatsCard from "@/components/dashboard/StatsCard";
 import TaskListCard from "@/components/dashboard/TaskListCard";
 
-import {AlertTriangle, Check, Clock, ListTodo} from "lucide-react";
+import {AlertTriangle, Check, Clock, Eye, ListTodo, Plus} from "lucide-react";
 import {useAuthRedirect} from "@/lib/hooks/useAuthRedirect";
 import {useLoadTodos} from "@/lib/hooks/useLoadTodos";
 
@@ -38,6 +38,7 @@ export default function DashboardPage() {
 		todos: today,
 		link: "/tasks",
 		linkLabel: "View All Tasks",
+		icon: <Eye/>,
 	};
 
 	const upcomingCardProps = {
@@ -45,6 +46,7 @@ export default function DashboardPage() {
 		todos: upcoming,
 		link: "/tasks/new",
 		linkLabel: "Add New Task",
+		icon: <Plus/>,
 	};
 
 	const handleCardClick = (type: string) => {

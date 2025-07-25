@@ -12,7 +12,7 @@ export default function CtaSection() {
 					Join thousands of users who have transformed their productivity with TaskMaster ToDo Planner.
 				</p>
 				<Button asChild size="lg" variant="secondary" className="shadow-medium">
-					<Link href="/signup">Start Your Journey</Link>
+					<Link href="/dashboard">Start Your Journey</Link>
 				</Button>
 			</div>
 		</section>

@@ -17,3 +17,7 @@ a {
 .wrapper {
 	@apply min-h-screen;
 }
+
+button {
+	@apply cursor-pointer;
+}

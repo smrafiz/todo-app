@@ -58,7 +58,7 @@ export default function EditTaskPage() {
 							className="flex items-center text-sm text-blue-600 hover:underline"
 						>
 							<ArrowLeft className="w-4 h-4 mr-1" />
-							Back to Tasks
+							Back
 						</button>
 					</div>
 					<h1 className="text-3xl font-bold text-gray-900">Edit Task</h1>

@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         const inputId = id || React.useId();
 
         return (
-            <div className="w-full">
+            <div className="flex flex-col">
                 {label && (
                     <label htmlFor={inputId} className="block text-sm font-semibold text-gray-700 mb-1">
                         {label}

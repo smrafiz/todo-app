@@ -95,7 +95,7 @@ export default function TaskItem({todo}: Props) {
 							)}
 
 							<div className="flex items-center gap-4 mt-3">
-				                <span className={`text-sm ${getDueDateColor()}`}>
+				                <span className={`flex items-center text-sm ${getDueDateColor()}`}>
 				                  <Calendar className="w-4 h-4 mr-1" />
 					                {getDueDateText()}
 				                </span>

@@ -1,7 +1,6 @@
 import {create} from 'zustand';
 import type {Project} from '@prisma/client';
 import {ProjectAction, projectReducer, ProjectState} from '@/lib/reducer/projectReducer';
-import {useCallback} from "react";
 
 type ProjectStore = ProjectState & {
 	dispatch: (action: ProjectAction) => void;
