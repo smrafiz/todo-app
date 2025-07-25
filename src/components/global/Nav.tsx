@@ -41,6 +41,16 @@ const Nav = () => {
 							</Button>
 						</li>
 						<li>
+							<Button asChild variant="ghost" className={linkClass('/tasks')}>
+								<Link href={'/tasks'}>Tasks</Link>
+							</Button>
+						</li>
+						<li>
+							<Button asChild variant="ghost" className={linkClass('/projects')}>
+								<Link href={'/projects'}>Projects</Link>
+							</Button>
+						</li>
+						<li>
 							<Button asChild variant="ghost" className={linkClass('/report')}>
 								<Link href={'/report'}>Report</Link>
 							</Button>

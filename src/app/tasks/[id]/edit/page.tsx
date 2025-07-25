@@ -28,14 +28,14 @@ export default function EditTaskPage() {
 			try {
 				const res = await fetch(`/api/tasks/${id}`);
 				if (!res.ok) {
-					router.push('/tasks');
+					// router.push('/tasks');
 					return;
 				}
 				const data = await res.json();
 				setTask(data);
 			} catch (err) {
 				console.error("Failed to fetch task:", err);
-				router.push('/tasks');
+				// router.push('/tasks');
 			} finally {
 				setLoading(false);
 			}
